@@ -2,7 +2,7 @@
 --- Documentation: https://mise.jdx.dev/env-plugin-development.html#miseenv-hook
 --- @param ctx {options: table} Context (options = plugin configuration from mise.toml)
 --- @return table[] List of environment variable definitions with key/value pairs
-function PLUGIN:MiseEnv(ctx)
+function PLUGIN:MiseEnv(ctx): { { key: string, value: string } }
 	-- Access plugin options from mise.toml configuration
 	-- Example mise.toml:
 	--   [env_plugins.my-env-plugin]
@@ -10,7 +10,7 @@ function PLUGIN:MiseEnv(ctx)
 	local _options = ctx.options or {}
 
 	-- Return list of environment variables to set
-	local env_vars = {}
+	local env_vars: { { key: string, value: string } } = {}
 
 	-- Example: Static environment variable
 	table.insert(env_vars, {
@@ -33,7 +33,7 @@ function PLUGIN:MiseEnv(ctx)
     local home = os.getenv("HOME")
     table.insert(env_vars, {
         key = "MY_CONFIG_DIR",
-        value = home .. "/.config/my-tool"
+        value = `{home}/.config/my-tool`
     })
     --]]
 
