@@ -1,33 +1,41 @@
---!strict
-local Types = require("@lib/types")
-
-local plugin = PLUGIN :: Types.PluginType
-
 --- Returns environment variables to set when this plugin is active
---- Documentation: https://mise.jdx.dev/dev-tools/backends/vfox.html
-function plugin:MiseEnv(ctx: { env: { [string]: string } }): { [string]: string }
-	-- Access current environment variables
-	local _env = ctx.env
+--- Documentation: https://mise.jdx.dev/env-plugin-development.html#miseenv-hook
+--- @param ctx {options: table} Context (options = plugin configuration from mise.toml)
+--- @return table[] List of environment variable definitions with key/value pairs
+function PLUGIN:MiseEnv(ctx): { { key: string, value: string } }
+	-- Access plugin options from mise.toml configuration
+	-- Example mise.toml:
+	--   [env_plugins.my-env-plugin]
+	--   my_option = "value"
+	local _options = ctx.options or {}
 
-	-- Return map of environment variables to set
-	local result: { [string]: string } = {}
+	-- Return list of environment variables to set
+	local env_vars: { { key: string, value: string } } = {}
 
 	-- Example: Static environment variable
-	result["MY_ENV_VAR"] = "my_value"
+	table.insert(env_vars, {
+		key = "MY_ENV_VAR",
+		value = "my_value",
+	})
 
-	-- Example: Dynamic environment variable based on existing env
+	-- Example: Dynamic environment variable from options
 	--[[
-	if _env["HOME"] then
-		result["MY_CONFIG_DIR"] = `{_env["HOME"]}/.config/my-tool`
-	end
-	--]]
+    if options.api_key then
+        table.insert(env_vars, {
+            key = "MY_API_KEY",
+            value = options.api_key
+        })
+    end
+    --]]
 
-	-- Example: Conditional environment variable
+	-- Example: Environment variable with computed value
 	--[[
-	if not _env["MY_API_KEY"] then
-		result["MY_API_KEY"] = "default_key"
-	end
-	--]]
+    local home = os.getenv("HOME")
+    table.insert(env_vars, {
+        key = "MY_CONFIG_DIR",
+        value = `{home}/.config/my-tool`
+    })
+    --]]
 
-	return result
+	return env_vars
 end
