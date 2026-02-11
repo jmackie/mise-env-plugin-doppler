@@ -1,65 +1,41 @@
-# mise-env-plugin-template
+# mise-env-plugin-doppler
 
-Template for creating [mise](https://mise.jdx.dev) environment plugins.
+Load environment variables from Doppler using `doppler secrets download`.
 
-Environment plugins allow you to set environment variables and PATH entries dynamically based on configuration.
+## Requirements
 
-## Getting Started
+- `doppler` CLI installed and authenticated
 
-1. Click "Use this template" to create your own plugin repository
-2. Update `metadata.lua` with your plugin information
-3. Implement `hooks/mise_env.lua` to set environment variables
-4. Optionally implement `hooks/mise_path.lua` to add PATH entries
+## Usage
 
-## Plugin Structure
+Add to your `mise.toml`:
 
-```
-├── metadata.lua           # Plugin metadata (name, version, etc.)
-├── hooks/
-│   ├── mise_env.lua       # Environment variables hook (required)
-│   └── mise_path.lua      # PATH entries hook (optional)
-├── .luarc.json            # Lua language server configuration
-├── hk.pkl                 # hk linter configuration
-├── mise.toml              # mise configuration for development
-└── .github/workflows/
-    └── ci.yml             # GitHub Actions CI
+```toml
+[env]
+_.doppler = { project = "my-app", config = "dev" }
 ```
 
-## Hooks
+### Options
 
-### `mise_env.lua`
+- `project` (required): Doppler project name
+- `config` (required): Doppler config name
+- `bin` (optional): Path or name of the `doppler` executable (default: `doppler`)
+- `cacheable` (optional): Override caching (default: `true`)
 
-Returns a list of environment variables to set:
+### Caching
 
-```lua
-function PLUGIN:MiseEnv(ctx)
-    return {
-        { key = "MY_VAR", value = "my_value" }
-    }
-end
-```
+This plugin returns cacheable results by default. To enable env caching in mise:
 
-### `mise_path.lua`
-
-Returns a list of paths to prepend to PATH:
-
-```lua
-function PLUGIN:MisePath(ctx)
-    return { "/path/to/bin" }
-end
+```toml
+[settings]
+env_cache = true
 ```
 
 ## Development
 
 ```bash
-# Install development tools
 mise install
-
-# Run linter
 mise run lint
-
-# Fix linting issues
-mise run lint-fix
 ```
 
 ## Documentation
