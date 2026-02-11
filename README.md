@@ -12,7 +12,7 @@ Add to your `mise.toml`:
 
 ```toml
 [env]
-_.doppler = { project = "my-app", config = "dev" }
+_.doppler-env = { project = "my-app", config = "dev" }
 ```
 
 ### Options
