@@ -71,6 +71,7 @@ function PLUGIN:MiseEnv(ctx)
         "env",
     }, " ")
 
+    print("Fetching doppler secrets")
     local output = cmd.exec(command)
     local env_vars = parse_env_output(output)
 
